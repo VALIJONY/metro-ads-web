@@ -163,7 +163,7 @@ src/
     ├── AuthContext.tsx  tokens.ts  types.ts
     ├── status.ts  format.ts    # holat ranglari, pul va sana formatlash
     └── i18n/                   # lugʻat, LanguageContext, transliteratsiya
-design-reference/               # asl dizayn namunasi (Claude Design)
+design-reference/               # asl dizayn namunasi
 ```
 
 ## Dizaynga oid qarorlar
