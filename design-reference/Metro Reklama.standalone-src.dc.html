@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#f4f6f8;color:#101b28;font-family:Manrope,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:#1c4b7a;text-decoration:none}
+  a:hover{color:#0f2a43;text-decoration:underline}
+  input,select,button,textarea{font-family:inherit}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:8px;border:3px solid #f4f6f8}
+</style>
+</helmet>
+
+<div style="display:flex;min-height:100vh;align-items:stretch">
+
+  <aside style="flex:0 0 252px;background:#0f2a43;color:#e6eef6;padding:22px 16px 28px;display:flex;flex-direction:column;gap:26px;position:sticky;top:0;height:100vh">
+    <div style="display:flex;gap:11px;align-items:center;padding:0 6px">
+      <div style="width:36px;height:36px;border-radius:11px;background:#e2654f;display:flex;align-items:center;justify-content:center;font:800 15px/1 Manrope,sans-serif;color:#fff">M</div>
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <div style="font-size:14px;font-weight:800;letter-spacing:.01em">Metro Reklama</div>
+        <div style="font:500 10px/1 'JetBrains Mono',monospace;color:#7f9cb5;letter-spacing:.08em">TOSHKENT METROPOLITEN</div>
+      </div>
+    </div>
+
+    <nav style="display:flex;flex-direction:column;gap:4px">
+      <sc-for list="{{ nav }}" as="n" hint-placeholder-count="5">
+        <button onClick="{{ n.go }}" style="{{ n.style }}">
+          <span style="{{ n.dot }}"></span>
+          <span>{{ n.label }}</span>
+        </button>
+      </sc-for>
+    </nav>
+
+    <div style="margin-top:auto;display:flex;flex-direction:column;gap:10px;background:#16385a;border-radius:14px;padding:14px 15px">
+      <div style="font:600 10px/1 'JetBrains Mono',monospace;color:#8fb0c9;letter-spacing:.1em">MUDDATI TUGAYOTGAN</div>
+      <div style="font-size:26px;font-weight:800;color:#ffc94d">{{ stats.expiring }}</div>
+      <div style="font-size:12px;color:#a9c3d6;line-height:1.4">shartnoma 30 kun ichida yakunlanadi</div>
+    </div>
+  </aside>
+
+  <main style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column">
+
+    <header style="position:sticky;top:0;z-index:20;background:rgba(244,246,248,.92);backdrop-filter:blur(8px);border-bottom:1px solid #e2e8ee;padding:16px 32px;display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:9px;font-size:13px;color:#5b6b7c;flex:1 1 320px;min-width:0;flex-wrap:wrap">
+        <sc-for list="{{ crumbs }}" as="c" hint-placeholder-count="3">
+          <a href="#" onClick="{{ c.go }}" style="{{ c.style }}">{{ c.label }}</a>
+        </sc-for>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <button onClick="{{ openCreate }}" style="border:0;background:#0f2a43;color:#fff;font-size:13px;font-weight:700;padding:11px 18px;border-radius:10px;cursor:pointer;white-space:nowrap;box-shadow:0 8px 18px -10px rgba(15,42,67,.8)">+ Joy yaratish</button>
+        <div style="display:flex;align-items:center;gap:10px;padding-left:14px;border-left:1px solid #dde4ea">
+          <div style="width:34px;height:34px;border-radius:50%;background:#dbe6ef;color:#0f2a43;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800">SR</div>
+          <div style="display:flex;flex-direction:column">
+            <span style="font-size:12.5px;font-weight:700">S. Rasulov</span>
+            <span style="font-size:11px;color:#7c8b9b">Operator</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- DASHBOARD -->
+    <sc-if value="{{ isDash }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:28px 32px 48px;display:flex;flex-direction:column;gap:22px">
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <h1 style="margin:0;font-size:24px;font-weight:800;letter-spacing:-.01em">Dashboard</h1>
+          <p style="margin:0;font-size:13.5px;color:#66768a">Reklama joylari va shartnomalar holati — 10.09.2026 holatiga koʻra</p>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px">
+          <div style="background:#fff;border:1px solid #e6ebf0;border-radius:16px;padding:18px 20px;box-shadow:0 10px 22px -18px rgba(15,42,67,.5);display:flex;flex-direction:column;gap:9px">
+            <div style="font:600 10px/1 'JetBrains Mono',monospace;color:#8494a5;letter-spacing:.1em">JAMI JOYLAR</div>
+            <div style="font-size:30px;font-weight:800;letter-spacing:-.02em">{{ stats.total }}</div>
+            <div style="font-size:12px;color:#66768a">{{ stats.trains }} poyezd · {{ stats.vagons }} vagon</div>
+          </div>
+          <div style="background:#fff;border:1px solid #e6ebf0;border-radius:16px;padding:18px 20px;box-shadow:0 10px 22px -18px rgba(15,42,67,.5);display:flex;flex-direction:column;gap:9px">
+            <div style="font:600 10px/1 'JetBrains Mono',monospace;color:#8494a5;letter-spacing:.1em">BAND JOYLAR</div>
+            <div style="font-size:30px;font-weight:800;color:#c14a33;letter-spacing:-.02em">{{ stats.band }}</div>
+            <div style="font-size:12px;color:#66768a">faol shartnomalar asosida</div>
+          </div>
+          <div style="background:#fff;border:1px solid #e6ebf0;border-radius:16px;padding:18px 20px;box-shadow:0 10px 22px -18px rgba(15,42,67,.5);display:flex;flex-direction:column;gap:9px">
+            <div style="font:600 10px/1 'JetBrains Mono',monospace;color:#8494a5;letter-spacing:.1em">BOʻSH JOYLAR</div>
+            <div style="font-size:30px;font-weight:800;color:#1c6b3f;letter-spacing:-.02em">{{ stats.free }}</div>
+            <div style="font-size:12px;color:#66768a">sotuvga tayyor</div>
+          </div>
+          <div style="background:#fff;border:1px solid #e6ebf0;border-radius:16px;padding:18px 20px;box-shadow:0 10px 22px -18px rgba(15,42,67,.5);display:flex;flex-direction:column;gap:9px">
+            <div style="font:600 10px/1 'JetBrains Mono',monospace;color:#8494a5;letter-spacing:.1em">BAND BOʻLISH FOIZI</div>
+            <div style="font-size:30px;font-weight:800;letter-spacing:-.02em">{{ stats.pct }}%</div>
+            <div style="height:6px;border-radius:4px;background:#eef2f6;overflow:hidden"><div style="{{ stats.barStyle }}"></div></div>
+          </div>
+          <div style="background:#fff;border:1px solid #e6ebf0;border-radius:16px;padding:18px 20px;box-shadow:0 10px 22px -18px rgba(15,42,67,.5);display:flex;flex-direction:column;gap:9px">
+            <div style="font:600 10px/1 'JetBrains Mono',monospace;color:#8494a5;letter-spacing:.1em">MUDDATI TUGAYOTGAN</div>
+            <div style="font-size:30px;font-weight:800;color:#a8760a;letter-spacing:-.02em">{{ stats.expiring }}</div>
+            <div style="font-size:12px;color:#66768a">30 kun ichida</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;align-items:start">
+          <section style="background:#fff;border:1px solid #e6ebf0;border-radius:16px;padding:20px 22px 22px;box-shadow:0 10px 22px -18px rgba(15,42,67,.5);display:flex;flex-direction:column;gap:16px">
+            <h2 style="margin:0;font-size:15px;font-weight:800">Depolar boʻyicha taqsimot</h2>
+            <sc-for list="{{ depos }}" as="d" hint-placeholder-count="2">
+              <div style="display:flex;flex-direction:column;gap:8px;padding:14px 0;border-top:1px solid #eef2f6">
+                <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px">
+                  <span style="font-size:14px;font-weight:700">{{ d.name }}</span>
+                  <span style="font:500 12px/1 'JetBrains Mono',monospace;color:#66768a">{{ d.band }} / {{ d.total }}</span>
+                </div>
+                <div style="height:8px;border-radius:5px;background:#eef2f6;overflow:hidden;display:flex">
+                  <div style="{{ d.bandStyle }}"></div>
+                  <div style="{{ d.expStyle }}"></div>
+                </div>
+                <div style="display:flex;gap:16px;font-size:12px;color:#66768a">
+                  <span>{{ d.trains }} poyezd</span>
+                  <span>Bandlik {{ d.pct }}%</span>
+                  <span>Boʻsh {{ d.free }}</span>
+                </div>
+              </div>
+            </sc-for>
+          </section>
+
+          <section style="background:#fff;border:1px solid #e6ebf0;border-radius:16px;padding:20px 22px 8px;box-shadow:0 10px 22px -18px rgba(15,42,67,.5);display:flex;flex-direction:column;gap:6px">
+            <h2 style="margin:0 0 8px;font-size:15px;font-weight:800">Yaqin kunlarda tugaydigan shartnomalar</h2>
+            <sc-for list="{{ expiringList }}" as="e" hint-placeholder-count="6">
+              <button onClick="{{ e.go }}" style="all:unset;cursor:pointer;display:grid;grid-template-columns:1fr auto;gap:4px 14px;padding:12px 8px;border-top:1px solid #eef2f6;border-radius:8px">
+                <span style="font-size:13.5px;font-weight:700">{{ e.firm }}</span>
+                <span style="{{ e.badge }}">{{ e.days }} kun</span>
+                <span style="font:500 11.5px/1.5 'JetBrains Mono',monospace;color:#7c8b9b;grid-column:1/-1">{{ e.place }} · {{ e.cno }} · {{ e.end }}</span>
+              </button>
+            </sc-for>
+          </section>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- POYEZDLAR -->
+    <sc-if value="{{ isTrains }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:28px 32px 48px;display:flex;flex-direction:column;gap:20px">
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <h1 style="margin:0;font-size:24px;font-weight:800;letter-spacing:-.01em">Poyezdlar</h1>
+          <p style="margin:0;font-size:13.5px;color:#66768a">{{ rowsCount }} poyezd koʻrsatilmoqda</p>
+        </div>
+
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+          <input value="{{ q }}" onChange="{{ setQ }}" placeholder="Poyezd ID boʻyicha qidirish, masalan 04-11" style="flex:1 1 280px;min-width:200px;padding:11px 14px;border:1px solid #dde4ea;border-radius:10px;background:#fff;font-size:13px;color:#101b28;outline:none" />
+          <select value="{{ depoF }}" onChange="{{ setDepo }}" style="padding:11px 14px;border:1px solid #dde4ea;border-radius:10px;background:#fff;font-size:13px;font-weight:600;color:#101b28">
+            <option value="Hammasi">Barcha depolar</option>
+            <option value="Tch-1">Tch-1</option>
+            <option value="Tch-2">Tch-2</option>
+          </select>
+          <select value="{{ holatF }}" onChange="{{ setHolat }}" style="padding:11px 14px;border:1px solid #dde4ea;border-radius:10px;background:#fff;font-size:13px;font-weight:600;color:#101b28">
+            <option value="Hammasi">Barcha holatlar</option>
+            <option value="Yangi">Yangi</option>
+            <option value="Eski">Eski</option>
+          </select>
+        </div>
+
+        <div style="background:#fff;border:1px solid #e6ebf0;border-radius:16px;box-shadow:0 10px 22px -18px rgba(15,42,67,.5);overflow:hidden">
+          <div style="display:grid;grid-template-columns:1.1fr .8fr .8fr .7fr 1fr 1.4fr auto;gap:16px;padding:14px 22px;background:#f8fafc;border-bottom:1px solid #e6ebf0;font:700 10.5px/1 'JetBrains Mono',monospace;color:#7c8b9b;letter-spacing:.09em">
+            <span>POYEZD ID</span><span>DEPO</span><span>HOLATI</span><span>VAGON</span><span>BAND / JAMI</span><span>BANDLIK</span><span></span>
+          </div>
+          <sc-for list="{{ rows }}" as="r" hint-placeholder-count="8">
+            <div style="display:grid;grid-template-columns:1.1fr .8fr .8fr .7fr 1fr 1.4fr auto;gap:16px;padding:15px 22px;border-bottom:1px solid #f1f4f7;align-items:center">
+              <span style="font:700 13.5px/1 'JetBrains Mono',monospace">{{ r.id }}</span>
+              <span style="font-size:13px;color:#3d4d5f">{{ r.depo }}</span>
+              <span style="{{ r.badge }}">{{ r.holat }}</span>
+              <span style="font-size:13px;color:#3d4d5f">{{ r.vagons }} ta</span>
+              <span style="font:500 13px/1 'JetBrains Mono',monospace;color:#3d4d5f">{{ r.band }} / {{ r.total }}</span>
+              <span style="display:flex;align-items:center;gap:10px">
+                <span style="flex:1;height:7px;border-radius:5px;background:#eef2f6;overflow:hidden"><span style="{{ r.barStyle }}"></span></span>
+                <span style="font:600 12px/1 'JetBrains Mono',monospace;color:#0f2a43;min-width:34px;text-align:right">{{ r.pct }}%</span>
+              </span>
+              <button onClick="{{ r.go }}" style="border:1px solid #dde4ea;background:#fff;color:#0f2a43;font-size:12.5px;font-weight:700;padding:8px 14px;border-radius:9px;cursor:pointer">Sxema</button>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- POYEZD TAFSILOTI -->
+    <sc-if value="{{ isTrain }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:26px 32px 48px;display:flex;flex-direction:column;gap:20px">
+        <div style="display:flex;gap:24px;align-items:flex-end;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <div style="font:600 10.5px/1 'JetBrains Mono',monospace;color:#7c8b9b;letter-spacing:.1em">POYEZD</div>
+            <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+              <h1 style="margin:0;font:800 30px/1 'JetBrains Mono',monospace;letter-spacing:-.02em">{{ train.id }}</h1>
+              <span style="padding:6px 12px;border-radius:8px;background:#e8eef4;color:#0f2a43;font-size:12.5px;font-weight:700">{{ train.depo }}</span>
+              <span style="{{ train.badge }}">{{ train.holat }}</span>
+            </div>
+          </div>
+          <div style="display:flex;gap:28px;margin-left:auto;flex-wrap:wrap">
+            <div style="display:flex;flex-direction:column;gap:4px"><span style="font:600 10px/1 'JetBrains Mono',monospace;color:#8494a5;letter-spacing:.09em">JAMI JOY</span><span style="font-size:20px;font-weight:800">{{ train.total }}</span></div>
+            <div style="display:flex;flex-direction:column;gap:4px"><span style="font:600 10px/1 'JetBrains Mono',monospace;color:#8494a5;letter-spacing:.09em">BAND</span><span style="font-size:20px;font-weight:800;color:#c14a33">{{ train.band }}</span></div>
+            <div style="display:flex;flex-direction:column;gap:4px"><span style="font:600 10px/1 'JetBrains Mono',monospace;color:#8494a5;letter-spacing:.09em">TUGAYOTGAN</span><span style="font-size:20px;font-weight:800;color:#a8760a">{{ train.exp }}</span></div>
+            <div style="display:flex;flex-direction:column;gap:4px"><span style="font:600 10px/1 'JetBrains Mono',monospace;color:#8494a5;letter-spacing:.09em">BOʻSH</span><span style="font-size:20px;font-weight:800;color:#1c6b3f">{{ train.free }}</span></div>
+          </div>
+        </div>
+
+        <section style="border:1px solid #e6ebf0;border-radius:20px;background:#fff;box-shadow:0 18px 34px -26px rgba(15,42,67,.55);overflow:hidden">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 22px;border-bottom:1px solid #eef2f6;flex-wrap:wrap">
+            <div style="display:flex;flex-direction:column;gap:3px">
+              <h2 style="margin:0;font-size:15px;font-weight:800">Vagonlar sxemasi</h2>
+              <span style="font-size:12px;color:#7c8b9b">{{ schemaNote }}</span>
+            </div>
+            <div style="display:flex;gap:16px;align-items:center">
+              <div style="display:flex;gap:8px;align-items:center;font:600 11px/1 'JetBrains Mono',monospace;color:#7c8b9b;letter-spacing:.06em">
+                <span>HARAKAT YOʻNALISHI</span>
+                <span style="width:34px;height:1px;background:#c3cfda"></span>
+                <span>▶</span>
+              </div>
+              <div style="display:flex;gap:4px;padding:4px;background:#eef2f6;border-radius:11px">
+                <button onClick="{{ showVisual }}" style="{{ tabVisual }}">Vizual</button>
+                <button onClick="{{ showTable }}" style="{{ tabTable }}">Jadval</button>
+              </div>
+            </div>
+          </div>
+
+          <sc-if value="{{ isVisual }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:56px 34px 30px;overflow-x:auto;overflow-y:hidden;background:radial-gradient(circle at 22% 12%,#ffffff 0%,#f2f6f9 45%,#e9eff4 100%)">
+            <div style="{{ wrapStyle }}">
+              <sc-for list="{{ vagons }}" as="v" hint-placeholder-count="4">
+                <div style="display:flex;align-items:center;gap:0;transform-style:preserve-3d">
+                  <div style="position:relative;flex:0 0 auto;transform-style:preserve-3d">
+                    <div style="{{ v.bodyStyle }}">
+                      <div style="position:absolute;left:3.5%;right:3.5%;top:13%;bottom:13%;border-radius:16px;background:linear-gradient(180deg,#eaeff4,#f7f9fb 40%,#eaeff4);border:1px solid #d5dfe8"></div>
+                      <div style="position:absolute;left:6%;right:6%;top:41%;height:18%;border-radius:8px;background:linear-gradient(90deg,#dde5ec,#f1f5f8,#dde5ec)"></div>
+                      <div style="position:absolute;left:7%;right:7%;top:20%;height:9%;display:flex;gap:6px">
+                        <div style="flex:2;border-radius:4px;background:#dbe3ea"></div>
+                        <div style="flex:1;background:transparent"></div>
+                        <div style="flex:2;border-radius:4px;background:#dbe3ea"></div>
+                        <div style="flex:1;background:transparent"></div>
+                        <div style="flex:2;border-radius:4px;background:#dbe3ea"></div>
+                      </div>
+                      <div style="position:absolute;left:7%;right:7%;bottom:20%;height:9%;display:flex;gap:6px">
+                        <div style="flex:2;border-radius:4px;background:#dbe3ea"></div>
+                        <div style="flex:1;background:transparent"></div>
+                        <div style="flex:2;border-radius:4px;background:#dbe3ea"></div>
+                        <div style="flex:1;background:transparent"></div>
+                        <div style="flex:2;border-radius:4px;background:#dbe3ea"></div>
+                      </div>
+                      <div style="position:absolute;left:26%;top:12%;width:9%;height:3px;background:#8fa2b3;border-radius:2px"></div>
+                      <div style="position:absolute;left:60%;top:12%;width:9%;height:3px;background:#8fa2b3;border-radius:2px"></div>
+                      <div style="position:absolute;left:26%;bottom:12%;width:9%;height:3px;background:#8fa2b3;border-radius:2px"></div>
+                      <div style="position:absolute;left:60%;bottom:12%;width:9%;height:3px;background:#8fa2b3;border-radius:2px"></div>
+                      <div style="position:absolute;left:0;top:0;bottom:0;width:3.5%;background:linear-gradient(90deg,rgba(15,42,67,.12),rgba(15,42,67,0))"></div>
+                      <div style="position:absolute;right:0;top:0;bottom:0;width:3.5%;background:linear-gradient(270deg,rgba(15,42,67,.12),rgba(15,42,67,0))"></div>
+                      <sc-for list="{{ v.panels }}" as="p" hint-placeholder-count="6">
+                        <button onClick="{{ p.pick }}" title="{{ p.title }}" style="{{ p.style }}">{{ p.label }}</button>
+                      </sc-for>
+                    </div>
+                    <div style="margin:12px auto 0;width:80%;height:14px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(15,42,67,.2),rgba(15,42,67,0) 70%)"></div>
+                    <div style="text-align:center;margin-top:2px;display:flex;flex-direction:column;gap:3px">
+                      <span style="font:700 12px/1 'JetBrains Mono',monospace;color:#0f2a43">VAGON {{ v.no }}</span>
+                      <span style="font-size:11.5px;color:#7c8b9b">{{ v.band }} band · {{ v.free }} boʻsh</span>
+                    </div>
+                  </div>
+                  <sc-if value="{{ v.coupler }}" hint-placeholder-val="{{ true }}">
+                    <div style="width:26px;display:flex;align-items:center;justify-content:center;margin-bottom:52px">
+                      <div style="width:26px;height:12px;background:linear-gradient(#c3cfda,#7b8b9c);border-radius:3px;box-shadow:inset 0 1px 0 rgba(255,255,255,.6)"></div>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ v.bellows }}" hint-placeholder-val="{{ false }}">
+                    <div style="width:34px;height:172px;margin-bottom:52px;display:flex;align-items:stretch;gap:2px;padding:0 1px;background:linear-gradient(180deg,#dfe6ec,#eef2f6 50%,#dfe6ec);border-top:1px solid #c2cfda;border-bottom:1px solid #c2cfda;box-shadow:inset 0 0 12px -6px rgba(15,42,67,.45)">
+                      <div style="flex:1;background:linear-gradient(90deg,#c3cfda,#eef2f6)"></div>
+                      <div style="flex:1;background:linear-gradient(90deg,#c3cfda,#eef2f6)"></div>
+                      <div style="flex:1;background:linear-gradient(90deg,#c3cfda,#eef2f6)"></div>
+                      <div style="flex:1;background:linear-gradient(90deg,#c3cfda,#eef2f6)"></div>
+                      <div style="flex:1;background:linear-gradient(90deg,#c3cfda,#eef2f6)"></div>
+                      <div style="flex:1;background:linear-gradient(90deg,#c3cfda,#eef2f6)"></div>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          </sc-if>
+
+          <sc-if value="{{ isTable }}" hint-placeholder-val="{{ false }}">
+            <div style="overflow-x:auto">
+              <div style="min-width:960px">
+                <div style="display:grid;grid-template-columns:56px 74px 1.5fr 1.1fr 1.3fr .8fr 1.1fr 1fr auto;gap:14px;padding:13px 22px;background:#f8fafc;border-bottom:1px solid #e6ebf0;font:700 10.5px/1 'JetBrains Mono',monospace;color:#7c8b9b;letter-spacing:.08em">
+                  <span>№</span><span>VAGON</span><span>JOYLASHUVI</span><span>HOLATI</span><span>FIRMA</span><span>MAYDON</span><span>SHARTNOMA</span><span>MUDDATI</span><span></span>
+                </div>
+                <sc-for list="{{ tableRows }}" as="t" hint-placeholder-count="24">
+                  <div style="{{ t.rowStyle }}">
+                    <span style="font:800 13px/1 'JetBrains Mono',monospace;color:#0f2a43">{{ t.code }}</span>
+                    <span style="font-size:12.5px;color:#3d4d5f">Vagon {{ t.vagon }}</span>
+                    <span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:13px;font-weight:700">{{ t.slotName }}</span><span style="font-size:11.5px;color:#8494a5">{{ t.type }}</span></span>
+                    <span style="{{ t.badge }}">{{ t.status }}</span>
+                    <span style="font-size:13px;color:#3d4d5f">{{ t.firm }}</span>
+                    <span style="font:500 12.5px/1 'JetBrains Mono',monospace;color:#3d4d5f">{{ t.area }} m²</span>
+                    <span style="display:flex;flex-direction:column;gap:2px"><span style="font:600 12px/1 'JetBrains Mono',monospace">{{ t.cno }}</span><span style="font-size:11.5px;color:#8494a5">{{ t.price }}</span></span>
+                    <span style="font-size:12px;color:#3d4d5f">{{ t.term }}</span>
+                    <button onClick="{{ t.pick }}" style="border:1px solid #dde4ea;background:#fff;color:#0f2a43;font-size:12.5px;font-weight:700;padding:7px 13px;border-radius:9px;cursor:pointer">Ochish</button>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <div style="display:flex;gap:26px;flex-wrap:wrap;padding:16px 24px;border-top:1px solid #eef2f6;background:#fbfcfd">
+            <div style="display:flex;align-items:center;gap:9px;font-size:12.5px;color:#3d4d5f"><span style="width:16px;height:16px;border-radius:4px;background:#dff5e6;border:1.5px solid #2f9e5e"></span>Boʻsh joy</div>
+            <div style="display:flex;align-items:center;gap:9px;font-size:12.5px;color:#3d4d5f"><span style="{{ legendBand }}"></span>Band qilingan</div>
+            <div style="display:flex;align-items:center;gap:9px;font-size:12.5px;color:#3d4d5f"><span style="width:16px;height:16px;border-radius:4px;background:#fff0cf;border:1.5px solid #d99a1b"></span>Muddati tugayotgan (30 kun)</div>
+            <div style="margin-left:auto;font:500 11.5px/1 'JetBrains Mono',monospace;color:#8494a5;align-self:center">Raqamlash poyezd boʻyicha uzluksiz: №01–№{{ train.total }} · koʻrinish — tepadan</div>
+          </div>
+        </section>
+      </div>
+    </sc-if>
+
+    <!-- DEPOLAR -->
+    <sc-if value="{{ isDepos }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:28px 32px 48px;display:flex;flex-direction:column;gap:20px">
+        <h1 style="margin:0;font-size:24px;font-weight:800;letter-spacing:-.01em">Depolar</h1>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px">
+          <sc-for list="{{ depos }}" as="d" hint-placeholder-count="2">
+            <section style="background:#fff;border:1px solid #e6ebf0;border-radius:16px;padding:22px;box-shadow:0 10px 22px -18px rgba(15,42,67,.5);display:flex;flex-direction:column;gap:14px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline">
+                <h2 style="margin:0;font-size:18px;font-weight:800">{{ d.name }}</h2>
+                <span style="font:600 12px/1 'JetBrains Mono',monospace;color:#66768a">Bandlik {{ d.pct }}%</span>
+              </div>
+              <div style="height:8px;border-radius:5px;background:#eef2f6;overflow:hidden;display:flex"><div style="{{ d.bandStyle }}"></div><div style="{{ d.expStyle }}"></div></div>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+                <div style="display:flex;flex-direction:column;gap:3px"><span style="font:600 10px/1 'JetBrains Mono',monospace;color:#8494a5">POYEZD</span><span style="font-size:17px;font-weight:800">{{ d.trains }}</span></div>
+                <div style="display:flex;flex-direction:column;gap:3px"><span style="font:600 10px/1 'JetBrains Mono',monospace;color:#8494a5">JOYLAR</span><span style="font-size:17px;font-weight:800">{{ d.total }}</span></div>
+                <div style="display:flex;flex-direction:column;gap:3px"><span style="font:600 10px/1 'JetBrains Mono',monospace;color:#8494a5">BOʻSH</span><span style="font-size:17px;font-weight:800;color:#1c6b3f">{{ d.free }}</span></div>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;padding-top:6px;border-top:1px solid #eef2f6">
+                <sc-for list="{{ d.trainList }}" as="t" hint-placeholder-count="6">
+                  <button onClick="{{ t.go }}" style="border:1px solid #dde4ea;background:#f8fafc;color:#0f2a43;font:700 12px/1 'JetBrains Mono',monospace;padding:8px 11px;border-radius:8px;cursor:pointer">{{ t.id }}</button>
+                </sc-for>
+              </div>
+            </section>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- SHARTNOMALAR -->
+    <sc-if value="{{ isContracts }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:28px 32px 48px;display:flex;flex-direction:column;gap:18px">
+        <h1 style="margin:0;font-size:24px;font-weight:800;letter-spacing:-.01em">Shartnomalar</h1>
+        <input value="{{ cq }}" onChange="{{ setCq }}" placeholder="Firma yoki shartnoma raqami boʻyicha qidirish" style="max-width:420px;padding:11px 14px;border:1px solid #dde4ea;border-radius:10px;background:#fff;font-size:13px;outline:none" />
+        <div style="background:#fff;border:1px solid #e6ebf0;border-radius:16px;box-shadow:0 10px 22px -18px rgba(15,42,67,.5);overflow:hidden">
+          <div style="display:grid;grid-template-columns:1.2fr 1.4fr 1.6fr 1fr 1fr auto;gap:16px;padding:14px 22px;background:#f8fafc;border-bottom:1px solid #e6ebf0;font:700 10.5px/1 'JetBrains Mono',monospace;color:#7c8b9b;letter-spacing:.09em">
+            <span>SHARTNOMA</span><span>FIRMA</span><span>JOY</span><span>MUDDAT</span><span>NARX</span><span></span>
+          </div>
+          <sc-for list="{{ contractRows }}" as="c" hint-placeholder-count="10">
+            <div style="display:grid;grid-template-columns:1.2fr 1.4fr 1.6fr 1fr 1fr auto;gap:16px;padding:14px 22px;border-bottom:1px solid #f1f4f7;align-items:center">
+              <span style="font:600 12.5px/1 'JetBrains Mono',monospace">{{ c.cno }}</span>
+              <span style="font-size:13.5px;font-weight:700">{{ c.firm }}</span>
+              <span style="font:500 12px/1 'JetBrains Mono',monospace;color:#66768a">{{ c.place }}</span>
+              <span style="font-size:12.5px;color:#3d4d5f">{{ c.start }} – {{ c.end }}</span>
+              <span style="font-size:12.5px;color:#3d4d5f">{{ c.price }}</span>
+              <button onClick="{{ c.go }}" style="border:1px solid #dde4ea;background:#fff;color:#0f2a43;font-size:12.5px;font-weight:700;padding:8px 14px;border-radius:9px;cursor:pointer">Koʻrish</button>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- HISOBOTLAR -->
+    <sc-if value="{{ isReports }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:28px 32px 48px;display:flex;flex-direction:column;gap:18px">
+        <h1 style="margin:0;font-size:24px;font-weight:800;letter-spacing:-.01em">Hisobotlar</h1>
+        <div style="background:#fff;border:1px dashed #cfd9e3;border-radius:16px;padding:56px 24px;text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center">
+          <div style="font:600 11px/1 'JetBrains Mono',monospace;color:#8494a5;letter-spacing:.1em">HISOBOT MODULI</div>
+          <div style="font-size:16px;font-weight:700">Bandlik, daromad va shartnoma hisobotlari</div>
+          <div style="font-size:13px;color:#7c8b9b;max-width:420px;line-height:1.6">Depolar va davrlar boʻyicha eksport (XLSX / PDF) shu boʻlimda boʻladi. Talab qilinadigan koʻrsatkichlarni aniqlashtirib bersangiz, tayyorlab beramiz.</div>
+        </div>
+      </div>
+    </sc-if>
+
+  </main>
+
+  <!-- SIDE PANEL: REKLAMA JOYI TAFSILOTI -->
+  <sc-if value="{{ hasSel }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;background:rgba(15,42,67,.28);z-index:40" onClick="{{ closeSel }}"></div>
+  </sc-if>
+  <sc-if value="{{ hasSel }}" hint-placeholder-val="{{ false }}">
+    <aside style="position:fixed;top:0;right:0;bottom:0;width:436px;max-width:92vw;background:#fff;border-left:1px solid #e2e8ee;box-shadow:-24px 0 50px -30px rgba(15,42,67,.55);z-index:41;display:flex;flex-direction:column">
+      <div style="padding:20px 24px;border-bottom:1px solid #eef2f6;display:flex;justify-content:space-between;align-items:flex-start;gap:14px">
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <span style="font:600 10.5px/1 'JetBrains Mono',monospace;color:#7c8b9b;letter-spacing:.1em">REKLAMA JOYI</span>
+          <span style="font:700 15px/1.2 'JetBrains Mono',monospace">{{ sel.id }}</span>
+          <span style="{{ sel.badge }}">{{ sel.statusLabel }}</span>
+        </div>
+        <button onClick="{{ closeSel }}" style="border:1px solid #e2e8ee;background:#fff;width:32px;height:32px;border-radius:9px;cursor:pointer;color:#5b6b7c;font-size:15px;line-height:1">✕</button>
+      </div>
+
+      <div style="flex:1;overflow-y:auto;padding:20px 24px 26px;display:flex;flex-direction:column;gap:18px">
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <label style="font:600 10.5px/1 'JetBrains Mono',monospace;color:#8494a5;letter-spacing:.09em">REKLAMA NOMI (FIRMA)</label>
+          <input value="{{ sel.firm }}" onChange="{{ setFirm }}" placeholder="Firma nomi" style="padding:11px 13px;border:1px solid #dde4ea;border-radius:10px;font-size:14px;font-weight:700;color:#101b28;background:#fff;outline:none" />
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <label style="font:600 10.5px/1 'JetBrains Mono',monospace;color:#8494a5;letter-spacing:.09em">QURILMA TURI</label>
+          <select value="{{ sel.type }}" onChange="{{ setType }}" style="padding:11px 13px;border:1px solid #dde4ea;border-radius:10px;font-size:13.5px;font-weight:600;background:#fff;color:#101b28">
+            <sc-for list="{{ types }}" as="t" hint-placeholder-count="6">
+              <option value="{{ t }}">{{ t }}</option>
+            </sc-for>
+          </select>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <label style="font:600 10.5px/1 'JetBrains Mono',monospace;color:#8494a5;letter-spacing:.09em">BIRLIK</label>
+            <div style="padding:11px 13px;border:1px solid #eef2f6;border-radius:10px;background:#f8fafc;font-size:13.5px;font-weight:600">dona</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <label style="font:600 10.5px/1 'JetBrains Mono',monospace;color:#8494a5;letter-spacing:.09em">OʻLCHAMI</label>
+            <select value="{{ sel.olcham }}" onChange="{{ setOlcham }}" style="padding:11px 13px;border:1px solid #dde4ea;border-radius:10px;font-size:13.5px;font-weight:600;background:#fff;color:#101b28">
+              <option value="Kvadrat metr">Kvadrat metr</option>
+              <option value="Kompleks">Kompleks</option>
+            </select>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <label style="font:600 10.5px/1 'JetBrains Mono',monospace;color:#8494a5;letter-spacing:.09em">EGALLAGAN MAYDON</label>
+            <div style="padding:11px 13px;border:1px solid #eef2f6;border-radius:10px;background:#f8fafc;font:600 13.5px/1 'JetBrains Mono',monospace">{{ sel.area }} m²</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <label style="font:600 10.5px/1 'JetBrains Mono',monospace;color:#8494a5;letter-spacing:.09em">QURILMA NARXI</label>
+            <div style="padding:11px 13px;border:1px solid #eef2f6;border-radius:10px;background:#f8fafc;font:600 13.5px/1 'JetBrains Mono',monospace">{{ sel.price }}</div>
+          </div>
+        </div>
+
+        <div style="height:1px;background:#eef2f6"></div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <label style="font:600 10.5px/1 'JetBrains Mono',monospace;color:#8494a5;letter-spacing:.09em">SHARTNOMA RAQAMI</label>
+            <div style="padding:11px 13px;border:1px solid #eef2f6;border-radius:10px;background:#f8fafc;font:700 13.5px/1 'JetBrains Mono',monospace">{{ sel.cno }}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <label style="font:600 10.5px/1 'JetBrains Mono',monospace;color:#8494a5;letter-spacing:.09em">SHARTNOMA SANASI</label>
+            <div style="padding:11px 13px;border:1px solid #eef2f6;border-radius:10px;background:#f8fafc;font:600 13.5px/1 'JetBrains Mono',monospace">{{ sel.cdate }}</div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <label style="font:600 10.5px/1 'JetBrains Mono',monospace;color:#8494a5;letter-spacing:.09em">SHARTNOMA MUDDATI</label>
+          <div style="display:flex;align-items:center;gap:12px;padding:13px;border:1px solid #eef2f6;border-radius:10px;background:#f8fafc">
+            <span style="font:600 13.5px/1 'JetBrains Mono',monospace">{{ sel.start }}</span>
+            <span style="flex:1;height:6px;border-radius:4px;background:#e6ebf0;overflow:hidden"><span style="{{ sel.termStyle }}"></span></span>
+            <span style="font:600 13.5px/1 'JetBrains Mono',monospace">{{ sel.end }}</span>
+          </div>
+          <span style="font-size:12px;color:#7c8b9b">{{ sel.termNote }}</span>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <label style="font:600 10.5px/1 'JetBrains Mono',monospace;color:#8494a5;letter-spacing:.09em">SHARTNOMA FAYLI</label>
+          <div style="display:flex;align-items:center;gap:12px;padding:13px;border:1px solid #dde4ea;border-radius:10px;background:#fff">
+            <div style="width:34px;height:34px;border-radius:8px;background:#e8eef4;color:#0f2a43;display:flex;align-items:center;justify-content:center;font:700 9.5px/1 'JetBrains Mono',monospace">PDF</div>
+            <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+              <span style="font-size:13px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ sel.file }}</span>
+              <span style="font-size:11.5px;color:#7c8b9b">{{ sel.fileMeta }}</span>
+            </div>
+            <button onClick="{{ noop }}" style="border:1px solid #dde4ea;background:#f8fafc;color:#0f2a43;font-size:12px;font-weight:700;padding:8px 12px;border-radius:8px;cursor:pointer">Yuklab olish</button>
+          </div>
+          <button onClick="{{ noop }}" style="border:1px dashed #cfd9e3;background:#fbfcfd;color:#5b6b7c;font-size:12.5px;font-weight:600;padding:10px;border-radius:10px;cursor:pointer">Yangi fayl yuklash</button>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <label style="font:600 10.5px/1 'JetBrains Mono',monospace;color:#8494a5;letter-spacing:.09em">JOYLASHUVI</label>
+          <div style="font-size:13.5px;color:#3d4d5f;line-height:1.6">{{ sel.place }}</div>
+        </div>
+      </div>
+
+      <div style="padding:16px 24px;border-top:1px solid #eef2f6;display:flex;gap:10px;background:#fbfcfd">
+        <button onClick="{{ saveSel }}" style="flex:1;border:0;background:#0f2a43;color:#fff;font-size:13.5px;font-weight:700;padding:12px;border-radius:10px;cursor:pointer">Tahrirlashni saqlash</button>
+        <button onClick="{{ delSel }}" style="border:1px solid #f0c7be;background:#fff;color:#c14a33;font-size:13.5px;font-weight:700;padding:12px 16px;border-radius:10px;cursor:pointer">Oʻchirish</button>
+      </div>
+    </aside>
+  </sc-if>
+
+  <!-- JOY YARATISH -->
+  <sc-if value="{{ isCreate }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;background:rgba(15,42,67,.34);z-index:50;display:flex;align-items:center;justify-content:center;padding:32px">
+      <div style="width:660px;max-width:100%;max-height:100%;overflow-y:auto;background:#fff;border-radius:20px;box-shadow:0 40px 80px -40px rgba(15,42,67,.7);display:flex;flex-direction:column">
+        <div style="padding:22px 26px;border-bottom:1px solid #eef2f6;display:flex;justify-content:space-between;align-items:center;gap:16px">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <h2 style="margin:0;font-size:18px;font-weight:800">Yangi reklama joyi yaratish</h2>
+            <span style="font-size:12.5px;color:#7c8b9b">Poyezd {{ train.id }} · {{ train.depo }}</span>
+          </div>
+          <button onClick="{{ closeCreate }}" style="border:1px solid #e2e8ee;background:#fff;width:32px;height:32px;border-radius:9px;cursor:pointer;color:#5b6b7c">✕</button>
+        </div>
+
+        <div style="padding:22px 26px;display:flex;flex-direction:column;gap:18px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+            <div style="display:flex;flex-direction:column;gap:7px">
+              <label style="font:600 10.5px/1 'JetBrains Mono',monospace;color:#8494a5;letter-spacing:.09em">VAGON</label>
+              <select value="{{ form.vagon }}" onChange="{{ setFVagon }}" style="padding:11px 13px;border:1px solid #dde4ea;border-radius:10px;font-size:13.5px;font-weight:600;background:#fff">
+                <option value="1">Vagon 1</option>
+                <option value="2">Vagon 2</option>
+                <option value="3">Vagon 3</option>
+                <option value="4">Vagon 4</option>
+              </select>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:7px">
+              <label style="font:600 10.5px/1 'JetBrains Mono',monospace;color:#8494a5;letter-spacing:.09em">QURILMA TURI</label>
+              <select value="{{ form.type }}" onChange="{{ setFType }}" style="padding:11px 13px;border:1px solid #dde4ea;border-radius:10px;font-size:13.5px;font-weight:600;background:#fff">
+                <sc-for list="{{ types }}" as="t" hint-placeholder-count="6">
+                  <option value="{{ t }}">{{ t }}</option>
+                </sc-for>
+              </select>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:9px">
+            <label style="font:600 10.5px/1 'JetBrains Mono',monospace;color:#8494a5;letter-spacing:.09em">PANEL JOYLASHUVI — VAGON SXEMASIDA TANLANG</label>
+            <div style="position:relative;width:100%;padding-top:48%;border-radius:16px;background:linear-gradient(158deg,#ffffff,#e8eef4);border:1px solid #c2cfda;box-shadow:inset 0 1px 0 #fff">
+              <div style="position:absolute;left:0;right:0;top:0;height:15%;background:linear-gradient(#cfd9e3,#e7edf2);border-radius:16px 16px 0 0"></div>
+              <div style="position:absolute;left:26%;right:6%;top:20%;height:25%;display:flex;gap:8px">
+                <div style="flex:1;border-radius:5px;background:linear-gradient(150deg,#c9dcea,#f0f6fa);border:1px solid #b3c6d6"></div>
+                <div style="flex:1;border-radius:5px;background:linear-gradient(150deg,#c9dcea,#f0f6fa);border:1px solid #b3c6d6"></div>
+                <div style="flex:1;border-radius:5px;background:linear-gradient(150deg,#c9dcea,#f0f6fa);border:1px solid #b3c6d6"></div>
+                <div style="flex:1;border-radius:5px;background:linear-gradient(150deg,#c9dcea,#f0f6fa);border:1px solid #b3c6d6"></div>
+              </div>
+              <sc-for list="{{ formSlots }}" as="s" hint-placeholder-count="6">
+                <button onClick="{{ s.pick }}" title="{{ s.title }}" style="{{ s.style }}">{{ s.label }}</button>
+              </sc-for>
+            </div>
+            <span style="font-size:12px;color:#7c8b9b">{{ form.slotNote }}</span>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px">
+            <div style="display:flex;flex-direction:column;gap:7px">
+              <label style="font:600 10.5px/1 'JetBrains Mono',monospace;color:#8494a5;letter-spacing:.09em">OʻLCHAMI</label>
+              <select value="{{ form.olcham }}" onChange="{{ setFOlcham }}" style="padding:11px 13px;border:1px solid #dde4ea;border-radius:10px;font-size:13.5px;font-weight:600;background:#fff">
+                <option value="Kvadrat metr">Kvadrat metr</option>
+                <option value="Kompleks">Kompleks</option>
+              </select>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:7px">
+              <label style="font:600 10.5px/1 'JetBrains Mono',monospace;color:#8494a5;letter-spacing:.09em">MAYDON (M²)</label>
+              <input value="{{ form.area }}" onChange="{{ setFArea }}" style="padding:11px 13px;border:1px solid #dde4ea;border-radius:10px;font:600 13.5px/1 'JetBrains Mono',monospace;outline:none" />
+            </div>
+            <div style="display:flex;flex-direction:column;gap:7px">
+              <label style="font:600 10.5px/1 'JetBrains Mono',monospace;color:#8494a5;letter-spacing:.09em">BIRLIK</label>
+              <div style="padding:11px 13px;border:1px solid #eef2f6;border-radius:10px;background:#f8fafc;font-size:13.5px;font-weight:600">dona</div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+            <div style="display:flex;flex-direction:column;gap:7px">
+              <label style="font:600 10.5px/1 'JetBrains Mono',monospace;color:#8494a5;letter-spacing:.09em">REKLAMA NOMI (IXTIYORIY)</label>
+              <input value="{{ form.firm }}" onChange="{{ setFFirm }}" placeholder="Boʻsh qoldirilsa — boʻsh joy" style="padding:11px 13px;border:1px solid #dde4ea;border-radius:10px;font-size:13.5px;outline:none" />
+            </div>
+            <div style="display:flex;flex-direction:column;gap:7px">
+              <label style="font:600 10.5px/1 'JetBrains Mono',monospace;color:#8494a5;letter-spacing:.09em">QURILMA NARXI</label>
+              <input value="{{ form.price }}" onChange="{{ setFPrice }}" style="padding:11px 13px;border:1px solid #dde4ea;border-radius:10px;font:600 13.5px/1 'JetBrains Mono',monospace;outline:none" />
+            </div>
+          </div>
+        </div>
+
+        <div style="padding:18px 26px;border-top:1px solid #eef2f6;display:flex;gap:10px;justify-content:flex-end;background:#fbfcfd">
+          <button onClick="{{ closeCreate }}" style="border:1px solid #dde4ea;background:#fff;color:#3d4d5f;font-size:13.5px;font-weight:700;padding:12px 18px;border-radius:10px;cursor:pointer">Bekor qilish</button>
+          <button onClick="{{ submitCreate }}" style="border:0;background:#0f2a43;color:#fff;font-size:13.5px;font-weight:700;padding:12px 22px;border-radius:10px;cursor:pointer">Joyni yaratish</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;perspectiveView&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Sxema&quot;},&quot;panelLabels&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Sxema&quot;},&quot;bandColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#e2654f&quot;,&quot;options&quot;:[&quot;#e2654f&quot;,&quot;#c0392b&quot;,&quot;#d94f7a&quot;,&quot;#b45309&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Statuslar&quot;}}">
+class Component extends DCLogic {
+  TYPES = ["Yon bort sticker","Deraza usti panel","Eshik yoni ramka","Salon tepa panel","Pol sticker","Raqamli monitor"];
+  FIRMS = ["Uzum Market","Click","Payme","Korzinka","Artel","TBC Bank","Anorbank","Beeline Uzbekistan","Ucell","Humo","Osiyo Sugʻurta","Zoomrad","Oqtepa Lavash","Alif Shop"];
+  SLOTS = [
+    {l:6,t:2,w:17,h:11,name:"Chap devor — old qism"},
+    {l:37,t:2,w:19,h:11,name:"Chap devor — oʻrta"},
+    {l:72,t:2,w:22,h:11,name:"Chap devor — orqa"},
+    {l:6,t:87,w:17,h:11,name:"Oʻng devor — old qism"},
+    {l:37,t:87,w:19,h:11,name:"Oʻng devor — oʻrta"},
+    {l:72,t:87,w:22,h:11,name:"Oʻng devor — orqa"}
+  ];
+
+  constructor(props) {
+    super(props);
+    this.seed = 20260910;
+    const trains = this.build();
+    this.state = {
+      screen: "dashboard", trains, depoF: "Hammasi", holatF: "Hammasi", q: "",
+      tid: "04-1123", sel: null, create: false, cq: "", tview: "visual", form: this.blankForm()
+    };
+  }
+
+  r(n) { this.seed = (this.seed * 1103515245 + 12345) & 0x7fffffff; return this.seed % n; }
+  blankForm() { return { vagon: "1", slot: null, type: this.TYPES[0], firm: "", olcham: "Kvadrat metr", area: "1.2", price: "1 200 000 soʻm" }; }
+
+  fmt(d) { const p = n => String(n).padStart(2, "0"); return p(d.getDate()) + "." + p(d.getMonth() + 1) + "." + d.getFullYear(); }
+  money(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " soʻm"; }
+  addDays(d, n) { const x = new Date(d.getTime()); x.setDate(x.getDate() + n); return x; }
+
+  build() {
+    const TODAY = new Date(2026, 8, 10);
+    this.today = TODAY;
+    const groups = [
+      ["Tch-1", ["04-1123","04-1147","04-1201","05-0876","05-0912","06-1330"]],
+      ["Tch-2", ["07-2214","07-2251","08-1902","08-1988","09-0455","09-0512"]]
+    ];
+    let cn = 1240;
+    const trains = [];
+    groups.forEach(([depo, ids]) => ids.forEach(id => {
+      const holat = this.r(10) < 6 ? "Yangi" : "Eski";
+      const vagons = [];
+      for (let v = 1; v <= 4; v++) {
+        const panels = [];
+        for (let s = 0; s < 6; s++) {
+          const roll = this.r(100);
+          const status = roll < 56 ? "band" : (roll < 72 ? "tugayotgan" : "bosh");
+          const p = {
+            id: id + " / Joy №" + String((v - 1) * 6 + s + 1).padStart(2, "0"),
+            code: "№" + String((v - 1) * 6 + s + 1).padStart(2, "0"),
+            num: (v - 1) * 6 + s + 1, vagon: v, slot: s,
+            type: this.TYPES[this.r(this.TYPES.length)], status: status,
+            olcham: this.r(5) === 0 ? "Kompleks" : "Kvadrat metr",
+            area: ((6 + this.r(44)) / 10).toFixed(1)
+          };
+          if (status !== "bosh") {
+            p.firm = this.FIRMS[this.r(this.FIRMS.length)];
+            p.price = this.money((4 + this.r(28)) * 250000);
+            const end = status === "tugayotgan" ? this.addDays(TODAY, 2 + this.r(27)) : this.addDays(TODAY, 55 + this.r(400));
+            const start = this.addDays(end, -365);
+            p.end = end; p.endStr = this.fmt(end); p.startStr = this.fmt(start);
+            p.cdate = this.fmt(this.addDays(start, -12));
+            p.cno = "SH-2026/" + (cn++);
+            p.file = "shartnoma-" + p.cno.replace("/", "-") + ".pdf";
+            p.fileMeta = (180 + this.r(600)) + " KB · yuklangan " + p.cdate;
+          }
+          panels.push(p);
+        }
+        vagons.push({ no: v, panels: panels });
+      }
+      trains.push({ id: id, depo: depo, holat: holat, vagons: vagons });
+    }));
+    return trains;
+  }
+
+  colors() {
+    const band = this.props.bandColor || "#e2654f";
+    return {
+      bosh: { bg: "#dff5e6", bd: "#2f9e5e", fg: "#14532d", label: "Boʻsh joy" },
+      band: { bg: band + "2e", bd: band, fg: "#7d2a19", label: "Band qilingan" },
+      tugayotgan: { bg: "#fff0cf", bd: "#d99a1b", fg: "#7a5205", label: "Muddati tugayotgan" }
+    };
+  }
+
+  badge(bg, fg, bd) { return { justifySelf: "start", padding: "5px 10px", borderRadius: "7px", background: bg, color: fg, border: "1px solid " + bd, font: "700 11.5px/1 Manrope, sans-serif", whiteSpace: "nowrap" }; }
+  tab(active) { return { border: 0, background: active ? "#0f2a43" : "transparent", color: active ? "#fff" : "#5b6b7c", font: "700 12.5px/1 Manrope, sans-serif", padding: "8px 15px", borderRadius: "8px", cursor: "pointer" }; }
+  bar(pct, color) { return { display: "block", height: "100%", width: pct + "%", background: color, borderRadius: "5px" }; }
+
+  count(t) {
+    let total = 0, band = 0, exp = 0;
+    t.vagons.forEach(v => v.panels.forEach(p => { total++; if (p.status === "band") band++; if (p.status === "tugayotgan") { band++; exp++; } }));
+    return { total: total, band: band, exp: exp, free: total - band, pct: Math.round(band / total * 100) };
+  }
+
+  go(screen) { return () => this.setState({ screen: screen, sel: null }); }
+  openTrain(id) { return () => this.setState({ screen: "train", tid: id, sel: null }); }
+
+  patchSel(k, v) {
+    const sel = this.state.sel; if (!sel) return;
+    const trains = this.state.trains.map(t => t.id !== sel.tid ? t : Object.assign({}, t, {
+      vagons: t.vagons.map(vg => vg.no !== sel.v ? vg : Object.assign({}, vg, {
+        panels: vg.panels.map(p => p.slot !== sel.s ? p : Object.assign({}, p, { [k]: v }))
+      }))
+    }));
+    this.setState({ trains: trains });
+  }
+
+  freeSel() {
+    const sel = this.state.sel; if (!sel) return;
+    const trains = this.state.trains.map(t => t.id !== sel.tid ? t : Object.assign({}, t, {
+      vagons: t.vagons.map(vg => vg.no !== sel.v ? vg : Object.assign({}, vg, {
+        panels: vg.panels.map(p => p.slot !== sel.s ? p : { id: p.id, code: p.code, vagon: p.vagon, slot: p.slot, type: p.type, status: "bosh", olcham: p.olcham, area: p.area })
+      }))
+    }));
+    this.setState({ trains: trains, sel: null });
+  }
+
+  renderVals() {
+    const st = this.state, C = this.colors();
+    const nav = [
+      { key: "dashboard", label: "Dashboard" }, { key: "depos", label: "Depolar" },
+      { key: "trains", label: "Poyezdlar" }, { key: "contracts", label: "Shartnomalar" },
+      { key: "reports", label: "Hisobotlar" }
+    ].map(n => {
+      const active = st.screen === n.key || (n.key === "trains" && st.screen === "train");
+      return {
+        label: n.label, go: this.go(n.key),
+        style: { all: "unset", cursor: "pointer", display: "flex", alignItems: "center", gap: "11px", padding: "11px 14px", borderRadius: "11px", fontSize: "13.5px", fontWeight: active ? 800 : 600, color: active ? "#ffffff" : "#a9c3d6", background: active ? "#1c4b7a" : "transparent" },
+        dot: { width: "6px", height: "6px", borderRadius: "50%", background: active ? "#ffc94d" : "#456b8b" }
+      };
+    });
+
+    const train = st.trains.find(t => t.id === st.tid) || st.trains[0];
+    const tc = this.count(train);
+
+    let total = 0, band = 0, exp = 0, vagons = 0;
+    const flat = [];
+    st.trains.forEach(t => t.vagons.forEach(v => { vagons++; v.panels.forEach(p => {
+      total++; if (p.status !== "bosh") band++; if (p.status === "tugayotgan") exp++;
+      if (p.status !== "bosh") flat.push({ t: t, v: v, p: p });
+    }); }));
+
+    const depos = ["Tch-1", "Tch-2"].map(name => {
+      const list = st.trains.filter(t => t.depo === name);
+      let tt = 0, tb = 0, te = 0;
+      list.forEach(t => { const c = this.count(t); tt += c.total; tb += c.band; te += c.exp; });
+      const pct = Math.round(tb / tt * 100);
+      return {
+        name: name, total: tt, band: tb, free: tt - tb, pct: pct, trains: list.length,
+        bandStyle: { height: "100%", width: Math.round((tb - te) / tt * 100) + "%", background: C.band.bd },
+        expStyle: { height: "100%", width: Math.round(te / tt * 100) + "%", background: C.tugayotgan.bd },
+        trainList: list.map(t => ({ id: t.id, go: this.openTrain(t.id) }))
+      };
+    });
+
+    const expiringList = flat.filter(x => x.p.status === "tugayotgan")
+      .sort((a, b) => a.p.end - b.p.end).slice(0, 7)
+      .map(x => {
+        const days = Math.max(0, Math.round((x.p.end - this.today) / 86400000));
+        return { firm: x.p.firm, days: days, end: x.p.endStr, cno: x.p.cno,
+          place: x.t.id + " · V" + x.v.no + " · " + x.p.code + " · " + x.t.depo,
+          badge: this.badge(days <= 10 ? "#ffe3dd" : "#fff0cf", days <= 10 ? "#8c2f1d" : "#7a5205", days <= 10 ? "#f0c7be" : "#f0dcae"),
+          go: this.openTrain(x.t.id) };
+      });
+
+    const rows = st.trains.filter(t =>
+      (st.depoF === "Hammasi" || t.depo === st.depoF) &&
+      (st.holatF === "Hammasi" || t.holat === st.holatF) &&
+      t.id.toLowerCase().indexOf(st.q.trim().toLowerCase()) !== -1
+    ).map(t => {
+      const c = this.count(t);
+      return { id: t.id, depo: t.depo, holat: t.holat, vagons: t.vagons.length, band: c.band, total: c.total, pct: c.pct,
+        badge: this.badge(t.holat === "Yangi" ? "#e6f3ec" : "#eef2f6", t.holat === "Yangi" ? "#1c6b3f" : "#4a5a6b", t.holat === "Yangi" ? "#c8e4d5" : "#dde4ea"),
+        barStyle: this.bar(c.pct, c.pct > 85 ? C.band.bd : "#1c4b7a"),
+        go: this.openTrain(t.id) };
+    });
+
+    const showLabels = !!this.props.panelLabels;
+    const selKey = st.sel ? st.sel.v + ":" + st.sel.s : "";
+    const artic = train.holat === "Yangi";
+    const vagonVals = train.vagons.map(v => {
+      const b = v.panels.filter(p => p.status !== "bosh").length;
+      const first = v.no === 1, last = v.no === train.vagons.length;
+      const R = "26px", r = artic ? "6px" : R;
+      const radius = artic
+        ? (first ? R + " " + r + " " + r + " " + R : (last ? r + " " + R + " " + R + " " + r : r))
+        : R;
+      return {
+        no: v.no, band: b, free: v.panels.length - b,
+        coupler: !artic && !last, bellows: artic && !last,
+        bodyStyle: { position: "relative", width: artic ? "318px" : "332px", height: "196px", borderRadius: radius,
+          background: artic ? "linear-gradient(180deg,#ffffff 0%,#f4f8fb 50%,#e6edf3 100%)" : "linear-gradient(180deg,#ffffff 0%,#f2f6f9 50%,#e4ebf1 100%)",
+          border: "1px solid #c2cfda", boxShadow: "0 30px 40px -26px rgba(15,42,67,.55), inset 0 1px 0 #fff",
+          transformStyle: "preserve-3d", overflow: "hidden" },
+        panels: v.panels.map(p => {
+          const S = this.SLOTS[p.slot], c = C[p.status], on = selKey === (v.no + ":" + p.slot);
+          return {
+            label: showLabels && p.firm ? p.firm.split(" ")[0] : p.code,
+            title: S.name + " — " + (p.firm || "Boʻsh") + " (" + p.type + ")",
+            pick: () => this.setState({ sel: { tid: train.id, v: v.no, s: p.slot } }),
+            style: { position: "absolute", left: S.l + "%", top: S.t + "%", width: S.w + "%", height: S.h + "%",
+              border: "1.5px solid " + c.bd, background: c.bg, color: c.fg, borderRadius: "6px",
+              display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden",
+              font: "700 10px/1 'JetBrains Mono', monospace", letterSpacing: ".02em", cursor: "pointer",
+              transform: on ? "translateZ(20px) scale(1.07)" : "translateZ(8px)",
+              boxShadow: on ? "0 0 0 3px rgba(15,42,67,.42), 0 14px 22px -10px rgba(15,42,67,.6)" : "0 4px 8px -4px rgba(15,42,67,.45), inset 0 1px 0 rgba(255,255,255,.7)",
+              zIndex: on ? 6 : 3, transition: "transform .18s ease, box-shadow .18s ease" }
+          };
+        })
+      };
+    });
+
+    const tableRows = [];
+    train.vagons.forEach(v => v.panels.forEach(p => {
+      const c = C[p.status], on = selKey === (v.no + ":" + p.slot);
+      tableRows.push({
+        code: p.code, vagon: v.no, slotName: this.SLOTS[p.slot].name, type: p.type,
+        status: c.label, badge: this.badge(c.bg, c.fg, c.bd),
+        firm: p.firm || "—", area: p.area, cno: p.cno || "—", price: p.price || "—",
+        term: p.startStr ? p.startStr + " – " + p.endStr : "—",
+        pick: () => this.setState({ sel: { tid: train.id, v: v.no, s: p.slot } }),
+        rowStyle: { display: "grid", gridTemplateColumns: "56px 74px 1.5fr 1.1fr 1.3fr .8fr 1.1fr 1fr auto", gap: "14px",
+          padding: "12px 22px", borderBottom: "1px solid #f1f4f7", alignItems: "center",
+          background: on ? "#f2f7fb" : (v.no % 2 === 0 ? "#fcfdfe" : "#fff") }
+      });
+    }));
+
+    let selVals = null;
+    if (st.sel) {
+      const p = train.vagons[st.sel.v - 1].panels[st.sel.s];
+      const S = this.SLOTS[p.slot], c = C[p.status];
+      let termStyle = { display: "block", height: "100%", width: "0%", background: "#c3cfda", borderRadius: "4px" }, termNote = "Shartnoma mavjud emas — joy boʻsh";
+      if (p.end) {
+        const days = Math.round((p.end - this.today) / 86400000);
+        const passed = Math.min(100, Math.max(4, Math.round((365 - days) / 365 * 100)));
+        termStyle = { display: "block", height: "100%", width: passed + "%", background: p.status === "tugayotgan" ? C.tugayotgan.bd : "#1c4b7a", borderRadius: "4px" };
+        termNote = "Tugashiga " + days + " kun qoldi · muddat 12 oy";
+      }
+      selVals = {
+        id: p.id, firm: p.firm || "", type: p.type, olcham: p.olcham, area: p.area,
+        price: p.price || "—", cno: p.cno || "—", cdate: p.cdate || "—",
+        start: p.startStr || "—", end: p.endStr || "—", termStyle: termStyle, termNote: termNote,
+        file: p.file || "Fayl yuklanmagan", fileMeta: p.fileMeta || "Shartnoma fayli talab qilinadi",
+        statusLabel: c.label, badge: this.badge(c.bg, c.fg, c.bd),
+        place: train.depo + " → Poyezd " + train.id + " → Vagon " + st.sel.v + " → " + S.name + " (" + p.code + ")"
+      };
+    }
+
+    const crumbBase = { fontSize: "13px", color: "#7c8b9b", fontWeight: 600, textDecoration: "none", whiteSpace: "nowrap" };
+    const crumbLast = { fontSize: "13px", color: "#0f2a43", fontWeight: 800, textDecoration: "none", whiteSpace: "nowrap" };
+    const crumbs = [];
+    const sep = { fontSize: "13px", color: "#c3cfda", fontWeight: 400, textDecoration: "none", pointerEvents: "none" };
+    if (st.screen === "train") {
+      crumbs.push({ label: train.depo, go: this.go("depos"), style: crumbBase });
+      crumbs.push({ label: "→", go: this.noop, style: sep });
+      crumbs.push({ label: "Poyezd " + train.id, go: this.openTrain(train.id), style: st.sel ? crumbBase : crumbLast });
+      if (st.sel) {
+        crumbs.push({ label: "→", go: this.noop, style: sep });
+        crumbs.push({ label: "Vagon " + st.sel.v + " / " + train.vagons[st.sel.v - 1].panels[st.sel.s].code, go: this.noop, style: crumbLast });
+      }
+    } else {
+      const map = { dashboard: "Dashboard", depos: "Depolar", trains: "Poyezdlar", contracts: "Shartnomalar", reports: "Hisobotlar" };
+      crumbs.push({ label: "Bosh sahifa", go: this.go("dashboard"), style: crumbBase });
+      crumbs.push({ label: "→", go: this.noop, style: sep });
+      crumbs.push({ label: map[st.screen], go: this.noop, style: crumbLast });
+    }
+
+    const cqv = st.cq.trim().toLowerCase();
+    const contractRows = flat.filter(x => !cqv || x.p.firm.toLowerCase().indexOf(cqv) !== -1 || x.p.cno.toLowerCase().indexOf(cqv) !== -1)
+      .slice(0, 40).map(x => ({ cno: x.p.cno, firm: x.p.firm, price: x.p.price, start: x.p.startStr, end: x.p.endStr,
+        place: x.t.id + "/V" + x.v.no + "/" + x.p.code, go: this.openTrain(x.t.id) }));
+
+    const fv = st.form, fvag = train.vagons[Number(fv.vagon) - 1];
+    const formSlots = this.SLOTS.map((S, i) => {
+      const taken = fvag.panels[i].status !== "bosh", on = String(fv.slot) === String(i);
+      return {
+        label: "P" + (i + 1), title: S.name + (taken ? " — band" : " — boʻsh"),
+        pick: taken ? this.noop : () => this.setState({ form: Object.assign({}, fv, { slot: i }) }),
+        style: { position: "absolute", left: S.l + "%", top: S.t + "%", width: S.w + "%", height: S.h + "%",
+          borderRadius: "6px", border: on ? "2px solid #0f2a43" : "1.5px dashed " + (taken ? "#c3cfda" : "#2f9e5e"),
+          background: taken ? "#eef2f6" : (on ? "#0f2a43" : "#eafaf0"), color: on ? "#fff" : (taken ? "#94a3b8" : "#14532d"),
+          display: "flex", alignItems: "center", justifyContent: "center", font: "700 9.5px/1 'JetBrains Mono', monospace",
+          cursor: taken ? "not-allowed" : "pointer" }
+      };
+    });
+    const slotNote = fv.slot === null ? "Panel pozitsiyasini tanlang (kulrang — band pozitsiyalar)" : this.SLOTS[fv.slot].name + " tanlandi";
+
+    return {
+      nav: nav, crumbs: crumbs, types: this.TYPES,
+      isDash: st.screen === "dashboard", isTrains: st.screen === "trains", isTrain: st.screen === "train",
+      isDepos: st.screen === "depos", isContracts: st.screen === "contracts", isReports: st.screen === "reports",
+      stats: { total: total, band: band, free: total - band, exp: exp, expiring: exp, pct: Math.round(band / total * 100),
+        trains: st.trains.length, vagons: vagons, barStyle: this.bar(Math.round(band / total * 100), "#1c4b7a") },
+      depos: depos, expiringList: expiringList, rows: rows, rowsCount: rows.length,
+      q: st.q, depoF: st.depoF, holatF: st.holatF, cq: st.cq,
+      setQ: e => this.setState({ q: e.target.value }),
+      setDepo: e => this.setState({ depoF: e.target.value }),
+      setHolat: e => this.setState({ holatF: e.target.value }),
+      setCq: e => this.setState({ cq: e.target.value }),
+      contractRows: contractRows,
+      train: { id: train.id, depo: train.depo, holat: train.holat, total: tc.total, band: tc.band, exp: tc.exp, free: tc.free,
+        badge: this.badge(train.holat === "Yangi" ? "#e6f3ec" : "#eef2f6", train.holat === "Yangi" ? "#1c6b3f" : "#4a5a6b", train.holat === "Yangi" ? "#c8e4d5" : "#dde4ea") },
+      vagons: vagonVals,
+      wrapStyle: { display: "flex", alignItems: "center", gap: "0", minWidth: artic ? "1400px" : "1470px", transformStyle: "preserve-3d",
+        transform: this.props.perspectiveView === false ? "none" : "perspective(2600px) rotateX(27deg) rotateZ(-1deg)" },
+      schemaNote: (artic ? "Yangi poyezd — vagonlar garmoshka (oʻtish yoʻlagi) bilan birlashtirilgan." : "Eski poyezd — vagonlar avtoscepka bilan ulangan.") + " Panelni tanlash uchun ustiga bosing",
+      isVisual: st.tview === "visual", isTable: st.tview === "table",
+      showVisual: () => this.setState({ tview: "visual" }),
+      showTable: () => this.setState({ tview: "table" }),
+      tabVisual: this.tab(st.tview === "visual"), tabTable: this.tab(st.tview === "table"),
+      tableRows: tableRows,
+      legendBand: { width: "16px", height: "16px", borderRadius: "4px", background: C.band.bg, border: "1.5px solid " + C.band.bd },
+      hasSel: !!st.sel, sel: selVals, closeSel: () => this.setState({ sel: null }),
+      setFirm: e => this.patchSel("firm", e.target.value),
+      setType: e => this.patchSel("type", e.target.value),
+      setOlcham: e => this.patchSel("olcham", e.target.value),
+      saveSel: () => this.setState({ sel: null }),
+      delSel: () => this.freeSel(),
+      isCreate: st.create, form: Object.assign({}, fv, { slotNote: slotNote }), formSlots: formSlots,
+      openCreate: () => this.setState({ create: true, screen: st.screen === "train" ? "train" : "train", form: this.blankForm() }),
+      closeCreate: () => this.setState({ create: false }),
+      setFVagon: e => this.setState({ form: Object.assign({}, fv, { vagon: e.target.value, slot: null }) }),
+      setFType: e => this.setState({ form: Object.assign({}, fv, { type: e.target.value }) }),
+      setFOlcham: e => this.setState({ form: Object.assign({}, fv, { olcham: e.target.value }) }),
+      setFArea: e => this.setState({ form: Object.assign({}, fv, { area: e.target.value }) }),
+      setFFirm: e => this.setState({ form: Object.assign({}, fv, { firm: e.target.value }) }),
+      setFPrice: e => this.setState({ form: Object.assign({}, fv, { price: e.target.value }) }),
+      submitCreate: () => {
+        if (fv.slot === null) return;
+        const v = Number(fv.vagon), s = fv.slot;
+        const trains = st.trains.map(t => t.id !== train.id ? t : Object.assign({}, t, {
+          vagons: t.vagons.map(vg => vg.no !== v ? vg : Object.assign({}, vg, {
+            panels: vg.panels.map(p => p.slot !== s ? p : Object.assign({}, p, {
+              type: fv.type, olcham: fv.olcham, area: fv.area,
+              status: fv.firm ? "band" : "bosh",
+              firm: fv.firm || undefined, price: fv.firm ? fv.price : undefined,
+              cno: fv.firm ? "SH-2026/1401" : undefined, cdate: fv.firm ? "10.09.2026" : undefined,
+              startStr: fv.firm ? "01.10.2026" : undefined, endStr: fv.firm ? "01.10.2027" : undefined,
+              end: fv.firm ? new Date(2027, 9, 1) : undefined,
+              file: fv.firm ? "shartnoma-SH-2026-1401.pdf" : undefined,
+              fileMeta: fv.firm ? "yangi · yuklangan 10.09.2026" : undefined
+            }))
+          }))
+        }));
+        this.setState({ trains: trains, create: false, screen: "train", sel: { tid: train.id, v: v, s: s } });
+      },
+      noop: () => {}
+    };
+  }
+}
+</script>
+</body>
+</html>
